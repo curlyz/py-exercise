@@ -54,9 +54,9 @@ def correctSentence(sentence):
 		if True :
 			# cái này là chữ nè , xét nó
 			# 1 , xác định 3 thành phần của từ * left , center , right
-			left , center , right = _wordPartition(element)
+			lchunk , left , center , right , rchunk = _wordPartition(element)
 			if len(center) == 0 :
-				newSentence.append(left+center+right)
+				newSentence.append(lchunk+left+center+right+rchunk)
 				continue
 			# 2 , xác định dáu và vị trí của dấu của center
 			tone , position = _getTone(center) # trả về loại dấu và vị trí	eg : ["sharp" , 0]
@@ -84,7 +84,7 @@ def correctSentence(sentence):
 			character = _setTone(character , tone)
 			center = center.replace(center[correctPos] , character)
 			#print('\tNewToneCenter' , character , center)
-			newSentence.append(left + center + right)
+			newSentence.append(lchunk+left+center+right+rchunk)
 
 		#newSentence = ' '.join(newSentence)
 	print('\n[{original} --> {converted}]'.format(
@@ -100,10 +100,27 @@ def correctSentence(sentence):
 # It will start with ('_')
 # Functions, Variables that starts with '_' will not be import when using "from library import *"
 def _wordPartition(word):
+	original = word
 	"""
 		Seperate a word into 3 parts , return as list
 	"""
-	left , center , right = ['' for _ in range(3)]
+	lchunk , left , center , right , rchunk= ['' for _ in range(5)]
+	for x in range(len(word)):
+		if word[x].isalpha() == False :
+			lchunk += word[x]
+		else :
+			break
+	if len(lchunk) >0:
+		word = word[len(lchunk):]
+	for x in range(len(word)-1,0,-1):
+		if word[x].isalpha() == False :
+			rchunk = word[x] + rchunk
+		else :
+			break
+	if len(rchunk) >0 :
+		word = word[0:-len(rchunk)]
+
+
 	lWord = word.lower()
 	for i in range(len(_consonant)):
 		if lWord.find(_consonant[i]) == 0 :
@@ -127,8 +144,8 @@ def _wordPartition(word):
 		if i == len(word) - 1 and _isVowel == True:
 			center = word[len(left):]
 			right = ''
-	#print('_wordPartition' ,word ,  [left , center , right])
-	return [left , center , right]
+	print('_wordPartition [{}]'.format(original) ,  [lchunk,left , center , right,rchunk])
+	return [lchunk,left , center , right,rchunk]
 
 def _getTone(word):
 	tone = 5
@@ -144,6 +161,8 @@ def _getTone(word):
 
 
 def _setTone(word , tone):
+	if word.isupper() :
+		return _characterTone[word.lower()][tone].upper()
 	return _characterTone[word][tone]
 
-correctSentence('Thuỷ Thíêu gì hk ta ?')
+correctSentence('Thổ, Hoả, Thuỷ')
