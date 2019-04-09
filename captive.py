@@ -5,7 +5,7 @@ import machine
 
 ap = network.WLAN(network.AP_IF)
 ap.active(True)
-ap.config(essid="Change my LED", password="bananabanana", authmode=4) #authmode=1 == no pass
+ap.config(essid="Change my LED") #authmode=1 == no pass
 
 # PINs (5, 4, 0)
 r = machine.Pin(5, machine.Pin.OUT, machine.Pin.PULL_UP)
